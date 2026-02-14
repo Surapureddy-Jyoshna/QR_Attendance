@@ -1,11 +1,6 @@
-// =======================
-// QR ATTENDANCE LOGIC
-// =======================
-
 let attendanceTimer;
 let expiryTime;
 
-// START ATTENDANCE
 function startAttendance(){
 
 closeAttendance();
@@ -14,20 +9,14 @@ const qrWrapper = document.getElementById("qrWrapper");
 const qrDiv = document.getElementById("qrcode");
 
 qrDiv.innerHTML="";
-qrWrapper.style.display="block";
+qrWrapper.style.display="flex";
 
-// create session id
 const sessionId = "SESSION_"+Date.now();
-
-// expiry = 2 minutes
 expiryTime = Date.now() + 120000;
 
-// save session locally (simulate server)
-localStorage.setItem("activeSession",sessionId);
-localStorage.setItem("sessionExpiry",expiryTime);
-
-// IMPORTANT → CHANGE IP TO YOUR COMPUTER IP
+// CHANGE IP IF NEEDED
 const qrURL = `http://10.87.15.137:5500/scan.html?session=${sessionId}`;
+
 new QRCode(qrDiv,{
 text:qrURL,
 width:220,
@@ -37,7 +26,6 @@ height:220
 startTimer();
 }
 
-// TIMER
 function startTimer(){
 attendanceTimer = setInterval(()=>{
 
@@ -58,15 +46,9 @@ document.getElementById("timerText").innerText =
 },1000);
 }
 
-// CLOSE SESSION
 function closeAttendance(){
-
 clearInterval(attendanceTimer);
-
 document.getElementById("qrWrapper").style.display="none";
 document.getElementById("qrcode").innerHTML="";
 document.getElementById("timerText").innerText="";
-
-localStorage.removeItem("activeSession");
-localStorage.removeItem("sessionExpiry");
 }

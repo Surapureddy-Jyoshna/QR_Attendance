@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teacher Dashboard</title>
 
-<link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="dashboard.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -16,62 +15,83 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-<div class="sidebar-header">
-<div class="user-info">
-<div class="avatar"><i class="fas fa-chalkboard-teacher"></i></div>
-<div>
-<h3 id="teacherName">Loading...</h3>
-<p id="teacherId">Teacher ID: --</p>
-</div>
-</div>
-</div>
+  <div class="sidebar-header">
+    <div class="user-info">
+      <div class="avatar"><i class="fas fa-chalkboard-teacher"></i></div>
+      <div>
+        <h3>Teacher Name</h3>
+        <p>Teacher ID: 12345</p>
+      </div>
+    </div>
+  </div>
 
-<nav class="sidebar-nav">
-<a href="#" class="nav-item active" data-page="overview">Dashboard</a>
-<a href="#" class="nav-item" data-page="classes">Classes</a>
-<a href="#" class="nav-item" id="logoutBtn">Logout</a>
-</nav>
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item active"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="#" class="nav-item"><i class="fas fa-book"></i> My Classes</a>
+    <a href="#" class="nav-item"><i class="fas fa-users"></i> Students</a>
+    <a href="#" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+    <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+    <a href="#" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </nav>
 </aside>
 
-<!-- MAIN -->
+<!-- MAIN CONTENT -->
 <main class="main-content">
 
-<header class="dashboard-header">
-<h1>Teacher Dashboard</h1>
-<button class="btn btn-primary" id="createClassBtn">Create Class</button>
-</header>
+  <header class="dashboard-header">
+    <h1>Teacher Dashboard</h1>
+    <button class="btn btn-primary">+ Create Class</button>
+  </header>
 
-<!-- QR SECTION -->
-<div class="card center">
-<h2>Live Attendance QR</h2>
+  <!-- QR SECTION -->
+  <div class="card qr-card">
+    <h2>Live Attendance QR</h2>
 
-<button onclick="startAttendance()">Start Attendance</button>
-<button onclick="closeAttendance()">Close Attendance</button>
+    <div class="qr-buttons">
+      <button class="btn-start" onclick="startAttendance()">Start Attendance</button>
+      <button class="btn-close" onclick="closeAttendance()">Close Attendance</button>
+    </div>
 
-<div id="qrWrapper" style="display:none">
-<div id="qrcode" class="qr-box"></div>
-<p id="timerText" class="timer"></p>
-</div>
-</div>
+    <div id="qrWrapper" style="display:none;">
+      <div id="qrcode" class="qr-box"></div>
+      <p id="timerText" class="timer"></p>
+    </div>
 
-<!-- STATS -->
-<div class="card">
-<h3>Total Classes</h3>
-<h1 id="totalClasses">0</h1>
-</div>
+  </div>
 
-<div class="card">
-<h3>Total Students</h3>
-<h1 id="totalStudents">0</h1>
-</div>
+  <!-- STATS -->
+  <div class="stats-grid">
+
+    <div class="card stat-card">
+      <div class="stat-icon"><i class="fas fa-book"></i></div>
+      <div>
+        <h1>5</h1>
+        <p>Total Classes</p>
+      </div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div>
+        <h1>120</h1>
+        <p>Total Students</p>
+      </div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div>
+        <h1>85%</h1>
+        <p>Today's Attendance</p>
+      </div>
+    </div>
+
+  </div>
 
 </main>
 </div>
 
-<!-- QR LIBRARY -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<!-- DASHBOARD SCRIPT -->
 <script src="dashborad.js"></script>
 
 </body>

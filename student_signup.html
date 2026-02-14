@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Signup</title>
+
+<link rel="stylesheet" href="student_signup.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="signup-container">
+
+  <div class="signup-card">
+    
+    <h2><i class="fas fa-user-graduate"></i> Student Signup</h2>
+
+    <form id="studentSignupForm">
+
+      <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="Enter full name" required>
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="Enter email" required>
+      </div>
+
+      <div class="input-group">
+        <label>Student ID</label>
+        <input type="text" id="studentId" placeholder="Enter student ID" required>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Enter password" required>
+      </div>
+
+      <button type="submit" class="signup-btn">Create Account</button>
+
+      <p class="back" onclick="location.href='home.html'">
+        ← Back to Home
+        </p>
+
+      <p id="message"></p>
+
+    </form>
+
+  </div>
+
+</div>
+
+<script src="student_signup.js"></script>
+</body>
+</html>
