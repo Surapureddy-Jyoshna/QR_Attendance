@@ -19,15 +19,26 @@
     <div class="user-info">
       <div class="avatar"><i class="fas fa-chalkboard-teacher"></i></div>
       <div>
-        <h3>Teacher Name</h3>
-        <p>Teacher ID: 12345</p>
+        <h3 id="teacherName"></h3>
+        <p id="teacherId"></p>
+
       </div>
     </div>
   </div>
 
   <nav class="sidebar-nav">
-    <a href="#" class="nav-item active"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="#" class="nav-item"><i class="fas fa-book"></i> My Classes</a>
+    <a href="#" id="dashboardLink" class="nav-item active" onclick="showDashboard()">
+      <i class="fas fa-chart-line"></i> Dashboard
+  </a>
+  
+  <a href="#" id="myClassesLink" class="nav-item" onclick="showMyClasses()">
+      <i class="fas fa-book"></i> My Classes
+  </a>
+  
+  
+  
+  <div id="myClassesContainer" style="margin-left:20px;"></div>
+  
     <a href="#" class="nav-item"><i class="fas fa-users"></i> Students</a>
     <a href="#" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
     <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
@@ -44,7 +55,8 @@
 
   <header class="dashboard-header">
     <h1>Teacher Dashboard</h1>
-    <button class="btn btn-primary">+ Create Class</button>
+    <button class="btn btn-primary" onclick="openClassModal()">+ Create Class</button>
+
   </header>
 
   <!-- QR SECTION -->
@@ -89,9 +101,36 @@
         <p>Today's Attendance</p>
       </div>
     </div>
+   
+  
 
   </div>
+  <div id="myClassesSection" style="display:none; margin-top:20px;">
+    <div class="card">
+        <h2>My Conducted Classes</h2>
+        <div id="classListContainer"></div>
+    </div>
+</div>
+  <!-- Conduct Class Modal -->
+<div id="classModal" class="modal-overlay">
 
+  <div class="modal-box">
+      <h2>Conduct Class</h2>
+
+      <div class="input-group">
+          <input type="date" id="dateInput">
+      </div>
+
+      <div class="modal-buttons">
+          <button class="btn-save" onclick="conductClass()">Save</button>
+          <button class="btn-cancel" onclick="closeClassModal()">Cancel</button>
+      </div>
+  </div>
+
+</div>
+
+  
+  
 </main>
 </div>
 <!-- Logout Modal -->
@@ -107,20 +146,20 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="dashborad.js"></script>
 <script>
   document.getElementById("teacherLogout")
-  .addEventListener("click", function(e){
-  
-      e.preventDefault();
-  
-      const confirmLogout = confirm("Are you sure you want to logout?");
-  
-      if(confirmLogout){
-          localStorage.removeItem("employeeId");
-          window.location.href = "home.html";
-      }
-  });
+.addEventListener("click", function(e){
+
+    e.preventDefault();
+
+    const confirmLogout = confirm("Are you sure you want to logout?");
+
+    if(confirmLogout){
+        localStorage.removeItem("token");
+        window.location.href = "home.html";
+    }
+});
+
   </script>
 <script>
   const logoutBtn = document.getElementById("teacherLogout");
@@ -138,12 +177,14 @@
   });
   
   confirmBtn.addEventListener("click", function(){
-      localStorage.removeItem("employeeId");
-      window.location.href = "home.html";
-  });
+    localStorage.removeItem("token");
+    window.location.href = "teacher_login.html";
+});
+
   </script>
   
-  
+  <script src="dashborad.js"></script>
+
   
 </body>
 </html>

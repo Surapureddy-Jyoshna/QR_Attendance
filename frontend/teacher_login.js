@@ -1,3 +1,4 @@
+
 window.onload = function(){
 
     const form = document.getElementById("teacherLoginForm");
@@ -19,15 +20,23 @@ window.onload = function(){
         .then(res => res.json())
         .then(data => {
 
-            if(data.message === "Login Successful"){
-                localStorage.setItem("employeeId", employeeId);
+            if(data.success){
+
+                // 🔐 Store JWT Token
+                localStorage.setItem("token", data.token);
+
+                // Redirect to dashboard
                 window.location.href = "teacher_dashboard.html";
+
             } else {
                 document.getElementById("message").innerText = data.message;
             }
 
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            console.error(err);
+            document.getElementById("message").innerText = "Server Error";
+        });
     });
 
 };

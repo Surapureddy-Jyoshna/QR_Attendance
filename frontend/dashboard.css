@@ -230,4 +230,87 @@
     border-radius:6px;
     cursor:pointer;
   }
-  
+  /* Modal Overlay */
+.modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Modal Box */
+.modal-box{
+  background: #ffffff;
+  padding: 30px;
+  width: 350px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: scaleUp 0.25s ease;
+}
+
+.modal-box h2{
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Input */
+.input-group input{
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.input-group input:focus{
+  border-color: #7b2ff7;
+  outline: none;
+  box-shadow: 0 0 5px rgba(123,47,247,0.4);
+}
+
+/* Buttons */
+.modal-buttons{
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-save{
+  background: linear-gradient(135deg,#7b2ff7,#f107a3);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-save:hover{
+  transform: scale(1.05);
+}
+
+.btn-cancel{
+  background: #e0e0e0;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Animations */
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes scaleUp{
+  from{transform:scale(0.8);}
+  to{transform:scale(1);}
+}

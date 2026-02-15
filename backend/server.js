@@ -1,6 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+
+
 
 const app = express();
 
@@ -40,6 +43,23 @@ const teacherSchema = new mongoose.Schema({
 });
 
 const Teacher = teacherConnection.model("Teacher", teacherSchema);
+
+const classSchema = new mongoose.Schema({
+  teacherId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Teacher"
+  },
+  date: {
+    type: String,
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Class = teacherConnection.model("Class", classSchema);
 
 // Student Signup API
 app.post("/student/signup", async (req, res) => {
@@ -95,16 +115,103 @@ app.post("/teacher/login", async (req, res) => {
 
   const teacher = await Teacher.findOne({ employeeId });
 
-  if (!teacher) {
-    return res.status(404).json({ message: "User does not exist" });
+  if (!teacher || teacher.password !== password) {
+      return res.json({ success: false, message: "Invalid credentials" });
   }
 
-  if (teacher.password !== password) {
-    return res.status(401).json({ message: "Incorrect password" });
-  }
+  const token = jwt.sign(
+      { id: teacher._id },
+      "mySecretKey",
+      { expiresIn: "1h" }
+  );
 
-  res.json({ message: "Login Successful", teacher });
+  res.json({
+      success: true,
+      token: token
+  });
 });
+function authenticateToken(req, res, next) {
+
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, "mySecretKey", (err, user) => {
+      if (err) return res.sendStatus(403);
+      req.user = user;
+      next();
+  });
+}
+app.get("/teacher/profile", authenticateToken, async (req, res) => {
+
+  const teacher = await Teacher.findById(req.user.id);
+
+  res.json({
+      name: teacher.name,
+      employeeId: teacher.employeeId
+  });
+});
+app.post("/teacher/conduct-class", authenticateToken, async (req, res) => {
+
+  const { date } = req.body;
+
+  const existing = await Class.findOne({
+      teacherId: req.user.id,
+      date: date
+  });
+
+  if(existing){
+      return res.json({ success: false, message: "Class already added for this date" });
+  }
+
+  const newRecord = new Class({
+      teacherId: req.user.id,
+      date
+  });
+
+  await newRecord.save();
+
+  res.json({ success: true });
+});
+app.get("/teacher/total-classes", authenticateToken, async (req, res) => {
+
+  const total = await Class.countDocuments({
+      teacherId: req.user.id
+  });
+
+  const dates = await Class.find({ teacherId: req.user.id })
+                         .select("_id date");
+
+
+  res.json({
+      totalClasses: total,
+      dates
+  });
+});
+app.delete("/teacher/delete-class/:id", authenticateToken, async (req, res) => {
+
+  const { id } = req.params;
+
+  await Class.deleteOne({
+      _id: id,
+      teacherId: req.user.id
+  });
+
+  res.json({ success: true });
+});
+
+
+
+app.get("/teacher/classes", authenticateToken, async (req, res) => {
+
+  const classes = await Class.find({ teacherId: req.user.id });
+
+  res.json(classes);
+});
+
+
+
 
 
 app.listen(5000, () => {
