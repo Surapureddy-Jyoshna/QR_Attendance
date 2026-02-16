@@ -314,3 +314,59 @@
   from{transform:scale(0.8);}
   to{transform:scale(1);}
 }
+.my-class-card {
+  padding: 25px;
+}
+
+.my-class-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-filter select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.class-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.class-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.class-card strong {
+  font-size: 16px;
+}
+
+.class-card button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.class-card button:hover {
+  background: #c0392b;
+}

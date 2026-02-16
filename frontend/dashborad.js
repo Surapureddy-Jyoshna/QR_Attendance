@@ -185,18 +185,19 @@ async function loadClasses(){
 
 async function showMyClasses(){
 
-    const section = document.getElementById("sectionSelect").value;
-
-    if(!section){
-        alert("Select section first");
-        return;
-    }
-
     setActiveLink("myClassesLink");
 
     document.querySelector(".qr-card").style.display = "none";
     document.querySelector(".stats-grid").style.display = "none";
     document.getElementById("myClassesSection").style.display = "block";
+
+    const section = document.getElementById("myClassSectionSelect").value;
+
+    if(!section){
+        document.getElementById("classListContainer").innerHTML =
+            "<p>Please select a section.</p>";
+        return;
+    }
 
     const token = localStorage.getItem("token");
 
@@ -317,3 +318,7 @@ async function loadSectionData(){
 }
 
 
+document.getElementById("myClassSectionSelect")
+.addEventListener("change", function(){
+    showMyClasses();
+});

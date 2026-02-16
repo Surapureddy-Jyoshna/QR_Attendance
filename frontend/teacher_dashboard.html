@@ -121,11 +121,29 @@
 
   </div>
   <div id="myClassesSection" style="display:none; margin-top:20px;">
-    <div class="card">
-        <h2>My Conducted Classes</h2>
-        <div id="classListContainer"></div>
+    <div class="card my-class-card">
+
+        <div class="my-class-header">
+            <h2>My Conducted Classes</h2>
+
+            <div class="section-filter">
+                <label>Select Section:</label>
+                <select id="myClassSectionSelect">
+                    <option value="">-- Select Section --</option>
+                    <option value="A">Section A</option>
+                    <option value="B">Section B</option>
+                    <option value="C">Section C</option>
+                    <option value="D">Section D</option>
+                    <option value="E">Section E</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="classListContainer" class="class-list"></div>
+
     </div>
 </div>
+
   <!-- Conduct Class Modal -->
 <div id="classModal" class="modal-overlay">
 
