@@ -1,3 +1,5 @@
+let currentSection = "";
+
 window.onload = async function () {
 
     const token = localStorage.getItem("token");
@@ -26,7 +28,7 @@ window.onload = async function () {
     document.getElementById("teacherName").innerText = data.name;
     document.getElementById("teacherId").innerText =
         "Teacher ID: " + data.employeeId;
-        loadTotalClasses();
+        
 
 
 };
@@ -97,10 +99,11 @@ function closeClassModal(){
 async function conductClass(){
 
     const token = localStorage.getItem("token");
+    const section = document.getElementById("classSection").value;
     const date = document.getElementById("dateInput").value;
 
-    if(!date){
-        alert("Select date");
+    if(!section || !date){
+        alert("Select section and date");
         return;
     }
 
@@ -110,7 +113,7 @@ async function conductClass(){
             "Content-Type": "application/json",
             Authorization: "Bearer " + token
         },
-        body: JSON.stringify({ date })
+        body: JSON.stringify({ section, date })
     });
 
     const data = await response.json();
@@ -121,8 +124,13 @@ async function conductClass(){
     }
 
     closeClassModal();
-    loadTotalClasses();
+
+    // Refresh section data
+    
+    loadSectionData();
 }
+
+
 async function loadTotalClasses(){
 
     const token = localStorage.getItem("token");
@@ -166,14 +174,23 @@ async function loadClasses(){
 
     classes.forEach(cls => {
         const p = document.createElement("p");
-        p.innerText = cls.subject + " - " + cls.date;
+        p.innerText = "Section " + cls.section + " - " + cls.date;
+
         div.appendChild(p);
     });
 
-    document.querySelector(".sidebar-nav").appendChild(div);
+    document.getElementById("myClassesContainer").appendChild(div);
+
 }
 
 async function showMyClasses(){
+
+    const section = document.getElementById("sectionSelect").value;
+
+    if(!section){
+        alert("Select section first");
+        return;
+    }
 
     setActiveLink("myClassesLink");
 
@@ -183,43 +200,55 @@ async function showMyClasses(){
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:5000/teacher/total-classes", {
-        headers: { Authorization: "Bearer " + token }
-    });
+    const response = await fetch(
+        `http://localhost:5000/teacher/my-classes/${section}`,
+        {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }
+    );
 
-    const data = await response.json();
+    const classes = await response.json();
 
     const container = document.getElementById("classListContainer");
     container.innerHTML = "";
 
-    data.dates.forEach(item => {
+    if(classes.length === 0){
+        container.innerHTML = "<p>No classes found for this section.</p>";
+        return;
+    }
+
+    classes.forEach(cls => {
+
         const div = document.createElement("div");
-        div.className = "card";
-        div.style.margin = "10px 0";
+        div.className = "class-card";
+
         div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h4>Class Conducted</h4>
-                    <p>Date: ${item.date}</p>
-                </div>
-                <button onclick="deleteClass('${item._id}')"
-                        style="background:red; color:white; padding:6px 12px; border:none; border-radius:6px;">
-                    Delete
-                </button>
+            <div>
+                <strong>Section: ${cls.section}</strong><br>
+                Date: ${cls.date}
             </div>
+            <button onclick="deleteClass('${cls._id}')"
+                style="background:red;color:white;border:none;padding:6px 12px;border-radius:6px;">
+                Delete
+            </button>
         `;
+
         container.appendChild(div);
     });
 }
 
-async function deleteClass(date){
+
+
+async function deleteClass(id){
 
     const token = localStorage.getItem("token");
 
     const confirmDelete = confirm("Are you sure you want to delete this class?");
     if(!confirmDelete) return;
 
-    await fetch(`http://localhost:5000/teacher/delete-class/${date}`, {
+    await fetch(`http://localhost:5000/teacher/delete-class/${id}`, {
         method: "DELETE",
         headers: {
             Authorization: "Bearer " + token
@@ -238,7 +267,10 @@ function showDashboard(){
     document.querySelector(".qr-card").style.display = "block";
     document.querySelector(".stats-grid").style.display = "grid";
     document.getElementById("myClassesSection").style.display = "none";
+
+    loadSectionData(); // ADD THIS
 }
+
 
 
 function setActiveLink(linkId){
@@ -248,3 +280,40 @@ function setActiveLink(linkId){
 
     document.getElementById(linkId).classList.add("active");
 }
+async function loadSectionData(){
+
+    const section = document.getElementById("sectionSelect").value;
+    currentSection = section;
+
+    if(!section){
+        document.getElementById("totalClasses").innerText = "0";
+        document.getElementById("totalStudents").innerText = "0";
+        document.getElementById("todaysAttendance").innerText = "0%";
+        return;
+    }
+    
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+        `http://localhost:5000/teacher/section-data/${section}`,
+        {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }
+    );
+
+    const data = await response.json();
+
+    document.getElementById("totalClasses").innerText =
+        data.totalClasses;
+
+    document.getElementById("totalStudents").innerText =
+        data.totalStudents;
+
+    document.getElementById("todaysAttendance").innerText =
+        data.todaysAttendance + "%";
+}
+
+

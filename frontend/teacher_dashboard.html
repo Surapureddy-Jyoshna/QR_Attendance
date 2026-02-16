@@ -74,6 +74,19 @@
     </div>
 
   </div>
+  <div style="margin-bottom:20px;">
+    <label style="font-weight:600;">Select Section:</label>
+    <select id="sectionSelect" onchange="loadSectionData()" 
+            style="padding:8px 12px; border-radius:6px;">
+        <option value="">-- Select Section --</option>
+        <option value="A">Section A</option>
+        <option value="B">Section B</option>
+        <option value="C">Section C</option>
+        <option value="D">Section D</option>
+        <option value="E">Section E</option>
+    </select>
+</div>
+
 
   <!-- STATS -->
   <div class="stats-grid">
@@ -81,7 +94,8 @@
     <div class="card stat-card">
       <div class="stat-icon"><i class="fas fa-book"></i></div>
       <div>
-        <h1>5</h1>
+        <h1 id="totalClasses">0</h1>
+
         <p>Total Classes</p>
       </div>
     </div>
@@ -89,7 +103,8 @@
     <div class="card stat-card">
       <div class="stat-icon"><i class="fas fa-users"></i></div>
       <div>
-        <h1>120</h1>
+        <h1 id="totalStudents">0</h1>
+
         <p>Total Students</p>
       </div>
     </div>
@@ -97,7 +112,7 @@
     <div class="card stat-card">
       <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
       <div>
-        <h1>85%</h1>
+        <h1 id="todaysAttendance">0%</h1>
         <p>Today's Attendance</p>
       </div>
     </div>
@@ -115,17 +130,29 @@
 <div id="classModal" class="modal-overlay">
 
   <div class="modal-box">
-      <h2>Conduct Class</h2>
-
-      <div class="input-group">
-          <input type="date" id="dateInput">
-      </div>
-
-      <div class="modal-buttons">
-          <button class="btn-save" onclick="conductClass()">Save</button>
-          <button class="btn-cancel" onclick="closeClassModal()">Cancel</button>
-      </div>
+    <h2>Conduct Class</h2>
+  
+    <div class="input-group">
+        <select id="classSection" style="width:100%; padding:10px;">
+            <option value="">Select Section</option>
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
+            <option value="C">Section C</option>
+            <option value="D">Section D</option>
+            <option value="E">Section E</option>
+        </select>
+    </div>
+  
+    <div class="input-group">
+        <input type="date" id="dateInput">
+    </div>
+  
+    <div class="modal-buttons">
+        <button class="btn-save" onclick="conductClass()">Save</button>
+        <button class="btn-cancel" onclick="closeClassModal()">Cancel</button>
+    </div>
   </div>
+  
 
 </div>
 

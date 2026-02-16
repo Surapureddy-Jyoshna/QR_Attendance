@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const csv = require("csv-parser");
 
 
 
@@ -49,6 +51,10 @@ const classSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Teacher"
   },
+  section: {
+    type: String,
+    required: true
+  },
   date: {
     type: String,
     required: true
@@ -58,6 +64,7 @@ const classSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
 
 const Class = teacherConnection.model("Class", classSchema);
 
@@ -154,41 +161,48 @@ app.get("/teacher/profile", authenticateToken, async (req, res) => {
 });
 app.post("/teacher/conduct-class", authenticateToken, async (req, res) => {
 
-  const { date } = req.body;
+  const { section, date } = req.body;
+
+  if(!section || !date){
+      return res.json({ success:false, message:"Section and date required" });
+  }
 
   const existing = await Class.findOne({
       teacherId: req.user.id,
-      date: date
+      section,
+      date
   });
 
   if(existing){
-      return res.json({ success: false, message: "Class already added for this date" });
+      return res.json({ success:false, message:"Class already added for this section on this date" });
   }
 
   const newRecord = new Class({
       teacherId: req.user.id,
+      section,
       date
   });
 
   await newRecord.save();
 
-  res.json({ success: true });
+  res.json({ success:true });
 });
+
 app.get("/teacher/total-classes", authenticateToken, async (req, res) => {
 
-  const total = await Class.countDocuments({
-      teacherId: req.user.id
-  });
+  const { section } = req.query;
 
-  const dates = await Class.find({ teacherId: req.user.id })
-                         .select("_id date");
+  let filter = { teacherId: req.user.id };
 
+  if(section){
+      filter.section = section;
+  }
 
-  res.json({
-      totalClasses: total,
-      dates
-  });
+  const total = await Class.countDocuments(filter);
+
+  res.json({ totalClasses: total });
 });
+
 app.delete("/teacher/delete-class/:id", authenticateToken, async (req, res) => {
 
   const { id } = req.params;
@@ -209,7 +223,52 @@ app.get("/teacher/classes", authenticateToken, async (req, res) => {
 
   res.json(classes);
 });
+app.get("/teacher/my-classes/:section", authenticateToken, async (req, res) => {
 
+  const section = req.params.section;
+
+  const classes = await Class.find({
+      teacherId: req.user.id,
+      section: section
+  });
+
+  res.json(classes);
+});
+
+
+app.get("/teacher/section-data/:section", authenticateToken, async (req, res) => {
+
+  const section = req.params.section;
+  const results = [];
+
+  fs.createReadStream(__dirname + "/CSE.csv")
+
+    .pipe(csv())
+    .on("data", (data) => {
+        if(data.Section === section){
+            results.push(data);
+        }
+    })
+    .on("end", async () => {
+
+        const totalStudents = results.length;
+
+       
+
+
+            const totalClasses = await Class.countDocuments({
+              teacherId: req.user.id,
+              section: section
+          });
+           const todaysAttendance = 0; 
+
+        res.json({
+            totalStudents,
+            totalClasses,
+            todaysAttendance
+        });
+    });
+});
 
 
 
