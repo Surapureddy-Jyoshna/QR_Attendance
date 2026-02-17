@@ -1,5 +1,10 @@
 let currentSection = "";
-
+function hideAllSections(){
+    document.querySelector(".qr-card").style.display = "none";
+    document.querySelector(".stats-grid").style.display = "none";
+    document.getElementById("myClassesSection").style.display = "none";
+    document.getElementById("studentsSection").style.display = "none";
+}
 window.onload = async function () {
 
     const token = localStorage.getItem("token");
@@ -185,10 +190,9 @@ async function loadClasses(){
 
 async function showMyClasses(){
 
+    hideAllSections();
     setActiveLink("myClassesLink");
 
-    document.querySelector(".qr-card").style.display = "none";
-    document.querySelector(".stats-grid").style.display = "none";
     document.getElementById("myClassesSection").style.display = "block";
 
     const section = document.getElementById("myClassSectionSelect").value;
@@ -227,11 +231,11 @@ async function showMyClasses(){
 
         div.innerHTML = `
             <div>
-                <strong>Section: ${cls.section}</strong><br>
-                Date: ${cls.date}
+                <strong>Section:</strong> ${cls.section}<br>
+                <strong>Date:</strong> ${cls.date}
             </div>
             <button onclick="deleteClass('${cls._id}')"
-                style="background:red;color:white;border:none;padding:6px 12px;border-radius:6px;">
+                style="background:red;color:white;border:none;padding:6px 10px;border-radius:6px;">
                 Delete
             </button>
         `;
@@ -239,6 +243,9 @@ async function showMyClasses(){
         container.appendChild(div);
     });
 }
+
+
+
 
 
 
@@ -262,15 +269,16 @@ async function deleteClass(id){
 }
 
 function showDashboard(){
-
+    hideAllSections();
     setActiveLink("dashboardLink");
 
     document.querySelector(".qr-card").style.display = "block";
     document.querySelector(".stats-grid").style.display = "grid";
-    document.getElementById("myClassesSection").style.display = "none";
-
-    loadSectionData(); // ADD THIS
 }
+
+
+
+
 
 
 
@@ -327,14 +335,13 @@ document.getElementById("myClassSectionSelect")
 
 
 function showStudents(){
-
+    hideAllSections();
     setActiveLink("studentsLink");
 
-    document.querySelector(".qr-card").style.display = "none";
-    document.querySelector(".stats-grid").style.display = "none";
-    document.getElementById("myClassesSection").style.display = "none";
     document.getElementById("studentsSection").style.display = "block";
 }
+
+
 document.getElementById("studentSectionSelect")
 .addEventListener("change", async function(){
 
@@ -369,20 +376,15 @@ document.getElementById("studentSectionSelect")
     students.forEach(student => {
 
         const div = document.createElement("div");
-        div.className = "student-card";
+        div.className = "student-name-card";
 
         div.innerHTML = `
-            <div class="student-left">
-            <h3>${student.Name}</h3>
-            <p>Roll No: ${student.RollNo}</p>
-        </div>
+            <span class="student-click"
+            onclick='openStudentModal(${JSON.stringify(student)})'>
+            ${student.Name}
+            </span>
+        `;
 
-        <div class="student-right">
-            <span class="section-badge">
-                Section ${student.Section}
-           </span>
-       </div>
-`       ;
 
 
         container.appendChild(div);
@@ -393,10 +395,33 @@ document.getElementById("studentSearch")
 .addEventListener("input", function(){
 
     const value = this.value.toLowerCase();
-    const cards = document.querySelectorAll(".student-card");
+    const cards = document.querySelectorAll(".student-name-card");
 
     cards.forEach(card => {
         const text = card.innerText.toLowerCase();
         card.style.display = text.includes(value) ? "flex" : "none";
     });
 });
+function openStudentModal(student){
+
+    const studentId = student.Student_ID || student["Student_ID"] || student["Student_ID "];
+
+    document.getElementById("modalId").innerText = studentId;
+    document.getElementById("modalName").innerText = student.Name;
+    document.getElementById("modalRoll").innerText = student.RollNo;
+    document.getElementById("modalSection").innerText = student.Section;
+
+    document.getElementById("studentModal").style.display = "flex";
+}
+
+
+
+function closeStudentModal(){
+    document.getElementById("studentModal").style.display = "none";
+}
+window.onclick = function(event){
+    const modal = document.getElementById("studentModal");
+    if(event.target === modal){
+        modal.style.display = "none";
+    }
+}

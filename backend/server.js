@@ -280,7 +280,13 @@ app.get("/teacher/students/:section", authenticateToken, async (req, res) => {
     .pipe(csv())
     .on("data", (data) => {
         if(data.Section === section){
-            students.push(data);
+          students.push({
+            Student_ID: data["Student_ID"]?.trim(),
+            Name: data["Name"]?.trim(),
+            Section: data["Section"]?.trim(),
+            RollNo: data["RollNo"]?.trim()
+        });
+        
         }
     })
     .on("end", () => {

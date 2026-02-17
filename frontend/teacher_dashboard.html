@@ -130,8 +130,8 @@
             <h2>My Conducted Classes</h2>
 
             <div class="section-filter">
-                <label>Select Section:</label>
-                <select id="myClassSectionSelect">
+                <label>Section:</label>
+                <select id="myClassSectionSelect" class="modern-select">
                     <option value="">-- Select Section --</option>
                     <option value="A">Section A</option>
                     <option value="B">Section B</option>
@@ -262,6 +262,39 @@
   
   <script src="dashborad.js"></script>
 
+  <!-- Student Details Modal -->
+  <div id="studentModal" class="modal-overlay">
+    <div class="modal-box">
   
+
+    <div class="modal-header">
+        <div class="profile-circle">
+            <i class="fas fa-user"></i>
+        </div>
+        <h2 id="modalName"></h2>
+        <p class="student-id">ID: <span id="modalId"></span></p>
+    </div>
+
+    <div class="modal-body">
+        <div class="info-block">
+            <span>Roll No</span>
+            <strong id="modalRoll"></strong>
+        </div>
+
+        <div class="info-block">
+            <span>Section</span>
+            <strong id="modalSection"></strong>
+        </div>
+    </div>
+
+    <button onclick="closeStudentModal()" class="modern-close">
+        Close
+    </button>
+
+  </div>
+</div>
+
+
+
 </body>
 </html>
