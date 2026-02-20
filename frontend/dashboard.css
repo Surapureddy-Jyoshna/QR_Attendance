@@ -627,3 +627,126 @@
   from { transform: scale(0.85); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+.settings-card {
+  padding: 30px;
+}
+
+.settings-block {
+  margin-bottom: 25px;
+}
+.dark-mode {
+  background-color: #121212;
+  color: white;
+}
+
+.dark-mode .card {
+  background-color: #1f1f1f;
+}
+
+.modern-input, .modern-select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.save-btn {
+  background: linear-gradient(90deg,#6a11cb,#2575fc);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg,#6a11cb,#2575fc);
+  color: white;
+}
+
+.profile-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: white;
+  color: #6a11cb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.settings-card-modern {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.expiry-options button {
+  padding: 8px 15px;
+  margin-right: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.expiry-options button:hover {
+  background: #6a11cb;
+  color: white;
+}
+.settings-wrapper {
+  max-width: 700px;
+}
+
+.settings-title {
+  margin-bottom: 25px;
+}
+
+.settings-group {
+  margin-bottom: 35px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.settings-group h4 {
+  margin-bottom: 15px;
+  color: #555;
+  font-weight: 600;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 15px;
+}
+
+.minimal-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: white;
+}
+
+.expiry-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}

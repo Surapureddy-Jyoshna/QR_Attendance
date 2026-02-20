@@ -4,39 +4,58 @@ function hideAllSections(){
     document.querySelector(".stats-grid").style.display = "none";
     document.getElementById("myClassesSection").style.display = "none";
     document.getElementById("studentsSection").style.display = "none";
+    document.getElementById("settingsSection").style.display = "none"; // ADD THIS
 }
-window.onload = async function () {
+
+window.onload = async function(){
 
     const token = localStorage.getItem("token");
 
-    if (!token) {
-        alert("Please login first");
+    if (!token){
         window.location.href = "teacher_login.html";
         return;
     }
 
-    const response = await fetch("http://localhost:5000/teacher/profile", {
-        headers: {
-            Authorization: "Bearer " + token
+    try{
+
+        // ===== LOAD PROFILE =====
+        const response = await fetch("http://localhost:5000/teacher/profile",{
+            headers:{ Authorization:"Bearer "+token }
+        });
+
+        const data = await response.json();
+
+        document.getElementById("teacherName").innerText = data.name;
+        document.getElementById("teacherId").innerText =
+            "Teacher ID: " + data.employeeId;
+
+        document.getElementById("profileName").innerText = data.name;
+        document.getElementById("profileEmployeeId").innerText =
+            data.employeeId;
+
+        // ===== LOAD TOTAL CLASSES =====
+        await loadTotalClasses();
+
+        // ===== LOAD THEME =====
+        if(localStorage.getItem("theme")==="dark"){
+            document.body.classList.add("dark-mode");
+            document.getElementById("darkToggle").checked = true;
         }
-    });
 
-    if (response.status === 401 || response.status === 403) {
-        alert("Session expired. Login again.");
-        localStorage.removeItem("token");
-        window.location.href = "teacher_login.html";
-        return;
+        // ===== LOAD QR EXPIRY =====
+        const saved =
+            localStorage.getItem("qrExpiry_"+token) || 120000;
+
+        document.getElementById("currentExpiryText").innerText =
+            (saved/60000)+" Minutes";
+
+        document.getElementById("expirySelect").value = saved;
+
+    }catch(err){
+        console.error("Dashboard Load Error:",err);
     }
-
-    const data = await response.json();
-
-    document.getElementById("teacherName").innerText = data.name;
-    document.getElementById("teacherId").innerText =
-        "Teacher ID: " + data.employeeId;
-        
-
-
 };
+
 
 let attendanceTimer;
 let expiryTime;
@@ -52,7 +71,14 @@ qrDiv.innerHTML="";
 qrWrapper.style.display="flex";
 
 const sessionId = "SESSION_"+Date.now();
-expiryTime = Date.now() + 120000;
+const token = localStorage.getItem("token");
+
+const savedExpiry =
+    localStorage.getItem("qrExpiry_" + token) || 120000;
+
+expiryTime = Date.now() + parseInt(savedExpiry);
+
+
 
 // CHANGE IP IF NEEDED
 const qrURL = `${window.location.origin}/frontend/scan.html?session=${sessionId}`;
@@ -149,7 +175,10 @@ async function loadTotalClasses(){
     const data = await response.json();
 
     // Update total count
-    document.querySelector(".stat-card h1").innerText = data.totalClasses;
+    document.getElementById("totalClasses").innerText =
+    data.totalClasses;
+
+
 
 
     
@@ -168,7 +197,8 @@ async function loadClasses(){
     const classes = await response.json();
 
     // Update Total Classes
-    document.querySelector(".stat-card h1").innerText = classes.length;
+    document.getElementById("totalClasses").innerText = classes.length;
+
 
     // Show in sidebar
     let existing = document.getElementById("classList");
@@ -287,6 +317,7 @@ function setActiveLink(linkId){
     document.getElementById("dashboardLink").classList.remove("active");
     document.getElementById("myClassesLink").classList.remove("active");
     document.getElementById("studentsLink").classList.remove("active");
+    document.getElementById("settingsLink").classList.remove("active");
 
 
     document.getElementById(linkId).classList.add("active");
@@ -425,3 +456,41 @@ window.onclick = function(event){
         modal.style.display = "none";
     }
 }
+function showSettings(){
+    hideAllSections();
+    setActiveLink("settingsLink");
+
+    document.getElementById("settingsSection").style.display = "block";
+
+    const token = localStorage.getItem("token");
+    const saved =
+        localStorage.getItem("qrExpiry_" + token) || 120000;
+
+    document.getElementById("currentExpiryText").innerText =
+        (saved / 60000) + " Minutes";
+
+    document.getElementById("expirySelect").value = saved;
+}
+
+
+function toggleDarkMode(){
+
+    document.body.classList.toggle("dark-mode");
+
+    if(document.body.classList.contains("dark-mode")){
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+}
+
+
+function updateExpiry(value){
+    const token = localStorage.getItem("token");
+
+    localStorage.setItem("qrExpiry_" + token, value);
+
+    document.getElementById("currentExpiryText").innerText =
+        (value / 60000) + " Minutes";
+}
+

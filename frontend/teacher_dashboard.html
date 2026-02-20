@@ -44,7 +44,10 @@
   </a>
   
     <a href="#" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
-    <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+    <a href="#" id="settingsLink" class="nav-item" onclick="showSettings()">
+      <i class="fas fa-cog"></i> Settings
+    </a>
+    
     <a href="#" id="teacherLogout" class="nav-item">
       <i class="fas fa-sign-out-alt"></i> Logout
    </a>
@@ -173,6 +176,64 @@
 
   </div>
 </div>
+
+<!-- SETTINGS SECTION -->
+<div id="settingsSection" style="display:none; margin-top:40px;">
+
+  <div class="settings-wrapper">
+
+      <h2 class="settings-title">Settings</h2>
+
+      <!-- ACCOUNT -->
+      <div class="settings-group">
+          <h4>Account</h4>
+
+          <div class="setting-row">
+              <span>Name</span>
+              <strong id="profileName"></strong>
+          </div>
+
+          <div class="setting-row">
+              <span>Employee ID</span>
+              <strong id="profileEmployeeId"></strong>
+          </div>
+      </div>
+
+      <!-- ATTENDANCE -->
+      <div class="settings-group">
+          <h4>Attendance</h4>
+
+          <div class="setting-row">
+              <span>QR Expiry</span>
+
+              <select id="expirySelect" class="minimal-select"
+                      onchange="updateExpiry(this.value)">
+                  <option value="120000">2 Minutes</option>
+                  <option value="300000">5 Minutes</option>
+                  <option value="600000">10 Minutes</option>
+              </select>
+          </div>
+
+          <div class="expiry-info">
+              Current Expiry: <span id="currentExpiryText"></span>
+          </div>
+      </div>
+
+      <!-- APPEARANCE -->
+      <div class="settings-group">
+          <h4>Appearance</h4>
+
+          <div class="setting-row">
+              <span>Dark Mode</span>
+              <input type="checkbox" id="darkToggle"
+                     onchange="toggleDarkMode()">
+          </div>
+      </div>
+
+  </div>
+
+</div>
+
 
 
 
