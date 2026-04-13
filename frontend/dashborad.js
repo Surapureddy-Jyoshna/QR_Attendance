@@ -168,11 +168,25 @@ function startTimer(){
     },1000);
 }
 
-function closeAttendance(){
-clearInterval(attendanceTimer);
-document.getElementById("qrWrapper").style.display="none";
-document.getElementById("qrcode").innerHTML="";
-document.getElementById("timerText").innerText="";
+async function closeAttendance(){
+
+  // 🔥 call backend to close session
+  if(window.currentSessionId){
+    await fetch(`${BASE_URL}/teacher/close-session`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        sessionId: window.currentSessionId
+      })
+    });
+  }
+
+  clearInterval(attendanceTimer);
+  document.getElementById("qrWrapper").style.display="none";
+  document.getElementById("qrcode").innerHTML="";
+  document.getElementById("timerText").innerText="";
 }
 
 function openClassModal(){

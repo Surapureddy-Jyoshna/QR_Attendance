@@ -356,10 +356,23 @@ const date = new Date().toISOString().split("T")[0];
   sessionId,
   createdAt: Date.now(),
   section,
-  date
+  date,
+  active: true   // 🔥 ADD THIS
 });
 
   res.json({ sessionId });
+});
+app.post("/teacher/close-session", (req, res) => {
+
+  const { sessionId } = req.body;
+
+  const session = global.sessions.find(s => s.sessionId === sessionId);
+
+  if(session){
+    session.active = false; // ❌ stop attendance
+  }
+
+  res.json({ success: true });
 });
 app.get("/teacher/attendance/:section/:date", async (req,res)=>{
 
@@ -378,6 +391,9 @@ app.post("/student/mark-attendance", async (req, res) => {
   if (!session) {
     return res.json({ success: false, message: "Invalid QR" });
   }
+  if (!session.active) {
+  return res.json({ success: false, message: "Attendance Closed" });
+}
 
   const date = session.date;
   const section = session.section;
