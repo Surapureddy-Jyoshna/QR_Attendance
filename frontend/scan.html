@@ -36,7 +36,6 @@ if(!sessionId){
     document.body.innerHTML="<h2>Invalid QR</h2>";
 }
 
-// 🔥 CALL BACKEND DIRECTLY (NO FORM NEEDED)
 document.getElementById("attendanceForm").onsubmit = async (e)=>{
     e.preventDefault();
 
@@ -48,32 +47,45 @@ document.getElementById("attendanceForm").onsubmit = async (e)=>{
         `<span style="color:red;">❌ Enter valid details</span>`;
         return;
     }
-    const res = await fetch("https://qr-attendance-1-odo4.onrender.com/student/mark-attendance",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-    sessionId,
-    studentId,
-    name,
-    deviceId
-})
+
+    // 🔥 GET STUDENT LOCATION
+    navigator.geolocation.getCurrentPosition(async (pos)=>{
+
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        // 🔥 SEND LOCATION TO BACKEND
+        const res = await fetch("https://qr-attendance-1-odo4.onrender.com/student/mark-attendance",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                sessionId,
+                studentId,
+                name,
+                deviceId,
+                lat,
+                lng
+            })
+        });
+
+        const data = await res.json();
+
+        if(data.success){
+            localStorage.setItem("attendance_" + sessionId, "true");
+
+            document.getElementById("msg").innerHTML =
+            `<span style="color:green;">✅ Marked at ${data.time}</span>`;
+        }else{
+            document.getElementById("msg").innerHTML =
+            `<span style="color:red;">❌ ${data.message}</span>`;
+        }
+
+    }, (err)=>{
+        document.getElementById("msg").innerHTML =
+        `<span style="color:red;">❌ Location permission required</span>`;
     });
-
-    const data = await res.json();
-
-    if(data.success){
-
-    // ✅ mark this device as used
-        localStorage.setItem("attendance_" + sessionId, "true");
-
-        document.getElementById("msg").innerHTML =
-        `<span style="color:green;">✅ Marked at ${data.time}</span>`;
-    }else{
-        document.getElementById("msg").innerHTML =
-        `<span style="color:red;">❌ ${data.message}</span>`;
-    }
 };
 
 </script>

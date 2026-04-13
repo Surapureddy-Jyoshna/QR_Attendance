@@ -71,6 +71,21 @@ async function startAttendance(){
   const token = localStorage.getItem("token");
 
   const section = document.getElementById("sectionSelect").value;
+  let teacherLat, teacherLng;
+
+navigator.geolocation.getCurrentPosition(
+  (pos) => {
+    teacherLat = pos.coords.latitude;
+    teacherLng = pos.coords.longitude;
+
+    startSessionWithLocation(teacherLat, teacherLng);
+  },
+  (err) => {
+    alert("Location access required!");
+  }
+);
+
+return;
 
 if(!section){
   alert("Please select section");
@@ -108,6 +123,25 @@ const res = await fetch(`${BASE_URL}/teacher/start-session`, {
 
 // 🔥 start live count
     startLiveCount();
+}
+async function startSessionWithLocation(lat, lng){
+
+  const token = localStorage.getItem("token");
+  const section = document.getElementById("sectionSelect").value;
+
+  const res = await fetch(`${BASE_URL}/teacher/start-session`, {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ section, lat, lng })
+  });
+
+  const data = await res.json();
+  const sessionId = data.sessionId;
+
+  // (keep your existing QR code logic here)
 }
 let liveInterval;
 

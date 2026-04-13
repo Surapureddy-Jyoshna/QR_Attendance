@@ -357,7 +357,7 @@ app.post("/teacher/start-session", (req, res) => {
 
   // store session (temporary memory)
   global.sessions = global.sessions || [];
-  const { section } = req.body;
+ const { section, lat, lng } = req.body;
 
 // ✅ auto date
 const date = new Date().toISOString().split("T")[0];
@@ -366,7 +366,9 @@ const date = new Date().toISOString().split("T")[0];
   createdAt: Date.now(),
   section,
   date,
-  active: true   // 🔥 ADD THIS
+  lat,
+  lng,
+  active: true
 });
 
   res.json({ sessionId });
