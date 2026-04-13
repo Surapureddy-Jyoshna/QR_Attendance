@@ -69,14 +69,7 @@ document.getElementById("attendanceForm").onsubmit = async (e)=>{
         `<span style="color:red;">❌ ${data.message}</span>`;
     }
 };
-// 🚫 prevent multiple attendance from same device
-const alreadyMarked = localStorage.getItem("attendance_" + sessionId);
 
-if(alreadyMarked){
-    document.getElementById("msg").innerHTML =
-    `<span style="color:red;">❌ Attendance already marked from this device</span>`;
-    return;
-}
 </script>
 
 </html>
