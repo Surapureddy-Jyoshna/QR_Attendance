@@ -123,8 +123,6 @@ function startLiveCount(){
 
             const data = await res.json();
 
-            document.getElementById("liveCount").innerText =
-                "Present: " + data.count;
 
         }catch(err){
             console.error("Live count error",err);
@@ -520,7 +518,8 @@ async function loadSectionData(){
     if(!section){
         document.getElementById("totalClasses").innerText = "0";
         document.getElementById("totalStudents").innerText = "0";
-        document.getElementById("todaysAttendance").innerText = "0%";
+        document.getElementById("todaysAttendance").innerText =
+    data.todaysAttendance;
         return;
     }
 

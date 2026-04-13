@@ -307,7 +307,16 @@ app.get("/teacher/section-data/:section", authenticateToken, async (req, res) =>
               teacherId: req.user.id,
               section: section
           });
-           const todaysAttendance = 0; 
+           const today = new Date().toISOString().split("T")[0];
+
+            const attendanceRecord = await Attendance.findOne({
+                section: section,
+                date: today
+            });
+
+const todaysAttendance = attendanceRecord
+  ? attendanceRecord.students.length
+  : 0;
 
         res.json({
             totalStudents,

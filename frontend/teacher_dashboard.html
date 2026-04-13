@@ -94,7 +94,6 @@
         <option value="E">Section E</option>
     </select>
 </div>
-<p id="liveCount">Present: 0</p>
 <div id="attendanceList" style="margin-top:15px;"></div>
   <!-- STATS -->
   <div class="stats-grid">
@@ -120,7 +119,7 @@
     <div class="card stat-card">
       <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
       <div>
-        <h1 id="todaysAttendance">0%</h1>
+        <h1 id="todaysAttendance">0</h1>
         <p>Today's Attendance</p>
       </div>
     </div>
@@ -183,34 +182,6 @@
 
   <div class="reports-grid">
 
-    <!-- FILTER CARD -->
-    <div class="card report-card">
-      <h3>Reports & Analytics</h3>
-
-      <div class="report-controls">
-        <label>Section:</label>
-        <select id="reportSection" onchange="loadReports()">
-          <option value="">-- Select --</option>
-          <option value="A">Section A</option>
-          <option value="B">Section B</option>
-        </select>
-
-        <input type="date" id="reportDate" onchange="loadReports()">
-      </div>
-    </div>
-
-    <!-- CHART CARD -->
-    <div class="card report-card">
-      <h3>Attendance Trend</h3>
-      <canvas id="attendanceChart"></canvas>
-    </div>
-
-    <!-- LOW ATTENDANCE -->
-    <div class="card report-card">
-      <h3>⚠️ Low Attendance</h3>
-      <div id="lowAttendanceList"></div>
-    </div>
-
     <!-- TABLE -->
     <div class="card report-card">
       <div style="display:flex; justify-content:space-between;">
@@ -231,6 +202,11 @@
         </thead>
         <tbody id="reportTable"></tbody>
       </table>
+    </div>
+    <!-- LOW ATTENDANCE -->
+    <div class="card report-card">
+      <h3>⚠️ Low Attendance</h3>
+      <div id="lowAttendanceList"></div>
     </div>
 
   </div>
