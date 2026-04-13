@@ -427,7 +427,12 @@ if (alreadyFromDevice) {
     return res.json({ success: false, message: "Already marked" });
   }
 
-  const currentTime = new Date().toLocaleTimeString();
+  const currentTime = new Date().toLocaleTimeString("en-IN", {
+  timeZone: "Asia/Kolkata",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit"
+});
 
   // ✅ save attendance
   record.students.push({
