@@ -70,7 +70,13 @@ const Class = mongoose.model("Class", classSchema, "Classes");
 const attendanceSchema = new mongoose.Schema({
     date: String,
     section: String,
-    students: [String]   // list of student IDs
+    students: [
+  {
+    studentId: String,
+    name: String,
+    time: String
+  }
+]
 });
 
 const Attendance = mongoose.model("Attendance", attendanceSchema);
@@ -361,7 +367,7 @@ app.get("/teacher/attendance/:section/:date", async (req,res)=>{
 });
 app.post("/student/mark-attendance", async (req, res) => {
 
-  const { sessionId, studentId } = req.body;
+  const { sessionId, studentId, name } = req.body;
 
   const session = global.sessions.find(s => s.sessionId === sessionId);
 
@@ -370,13 +376,12 @@ app.post("/student/mark-attendance", async (req, res) => {
   }
 
   const date = new Date().toISOString().split("T")[0];
-  const section = session.section || "A"; // fallback
+  const section = session.section;
 
-  // 🔥 find existing record
+  // 🔍 Find existing attendance for same date + section
   let record = await Attendance.findOne({ date, section });
 
   if (!record) {
-    // create new
     record = new Attendance({
       date,
       section,
@@ -384,17 +389,39 @@ app.post("/student/mark-attendance", async (req, res) => {
     });
   }
 
-  // 🔁 prevent duplicate
-  if (record.students.includes(studentId)) {
+  // ❌ Prevent duplicate attendance
+  const alreadyMarked = record.students.some(
+    s => s.studentId === studentId
+  );
+
+  if (alreadyMarked) {
     return res.json({ success: false, message: "Already marked" });
   }
 
-  // ✅ add student
-  record.students.push(studentId);
+  const currentTime = new Date().toLocaleTimeString();
+
+  // ✅ Add student
+  record.students.push({
+    studentId,
+    name,
+    time: currentTime
+  });
 
   await record.save();
 
-  res.json({ success: true });
+  // ✅ Live count fix
+  global.attendanceRecords = global.attendanceRecords || [];
+  global.attendanceRecords.push({
+    sessionId,
+    studentId,
+    name,
+    time: currentTime
+  });
+
+  res.json({
+    success: true,
+    time: currentTime
+  });
 });
 app.get("/teacher/live-count/:sessionId", (req, res) => {
 
