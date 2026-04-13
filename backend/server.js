@@ -391,14 +391,26 @@ app.post("/student/mark-attendance", async (req, res) => {
   if (!session) {
     return res.json({ success: false, message: "Invalid QR" });
   }
+
   if (!session.active) {
-  return res.json({ success: false, message: "Attendance Closed" });
-}
+    return res.json({ success: false, message: "Attendance Closed" });
+  }
 
   const date = session.date;
   const section = session.section;
 
-  // 🔍 Find existing attendance for same date + section
+  const userIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+  // ❌ block multiple from same device
+  const alreadyFromIP = global.attendanceRecords.some(
+    r => r.sessionId === sessionId && r.ip === userIP
+  );
+
+  if (alreadyFromIP) {
+    return res.json({ success: false, message: "Already marked from this device" });
+  }
+
+  // 🔍 Find record
   let record = await Attendance.findOne({ date, section });
 
   if (!record) {
@@ -409,7 +421,7 @@ app.post("/student/mark-attendance", async (req, res) => {
     });
   }
 
-  // ❌ Prevent duplicate attendance
+  // ❌ prevent duplicate student
   const alreadyMarked = record.students.some(
     s => s.studentId === studentId
   );
@@ -420,7 +432,7 @@ app.post("/student/mark-attendance", async (req, res) => {
 
   const currentTime = new Date().toLocaleTimeString();
 
-  // ✅ Add student
+  // ✅ save attendance
   record.students.push({
     studentId,
     name,
@@ -429,32 +441,20 @@ app.post("/student/mark-attendance", async (req, res) => {
 
   await record.save();
 
-  // ✅ Live count fix
-  global.attendanceRecords = global.attendanceRecords || [];
-  const userIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-// ❌ block multiple from same IP
-const alreadyFromIP = global.attendanceRecords.some(
-  r => r.sessionId === sessionId && r.ip === userIP
-);
-
-if(alreadyFromIP){
-  return res.json({ success: false, message: "Already marked from this device" });
-}
-
-global.attendanceRecords.push({
-  sessionId,
-  studentId,
-  name,
-  time: currentTime,
-  ip: userIP
-});
+  // ✅ store for live count
+  global.attendanceRecords.push({
+    sessionId,
+    studentId,
+    name,
+    time: currentTime,
+    ip: userIP
+  });
 
   res.json({
     success: true,
     time: currentTime
   });
-  console.log(req.body);
+
 });
 app.get("/teacher/live-count/:sessionId", (req, res) => {
 
