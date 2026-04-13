@@ -108,6 +108,7 @@ async function startSessionWithLocation(lat, lng){
 
   const data = await res.json();
   const sessionId = data.sessionId;
+  console.log("SESSION ID:", sessionId);
 
   // ✅ GENERATE QR (MISSING PART)
   const qrWrapper = document.getElementById("qrWrapper");

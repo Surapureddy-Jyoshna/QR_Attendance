@@ -98,6 +98,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
 }
 
 global.attendanceRecords = [];
+global.sessions = [];
 // Student Signup API
 app.post("/student/signup", async (req, res) => {
   const newStudent = new Student(req.body);
@@ -412,8 +413,7 @@ app.post("/student/mark-attendance", async (req, res) => {
 
   const { sessionId, studentId, name, deviceId, lat, lng} = req.body;
 
-  const session = global.sessions.find(s => s.sessionId === sessionId);
-  if (!session) {
+const session = (global.sessions || []).find(s => s.sessionId === sessionId);  if (!session) {
   return res.json({ success: false, message: "Invalid QR" });
 }
 
