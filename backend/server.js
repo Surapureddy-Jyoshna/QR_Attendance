@@ -384,7 +384,7 @@ app.get("/teacher/attendance/:section/:date", async (req,res)=>{
 });
 app.post("/student/mark-attendance", async (req, res) => {
 
-  const { sessionId, studentId, name } = req.body;
+  const { sessionId, studentId, name, deviceId } = req.body;
 
   const session = global.sessions.find(s => s.sessionId === sessionId);
 
@@ -399,16 +399,13 @@ app.post("/student/mark-attendance", async (req, res) => {
   const date = session.date;
   const section = session.section;
 
-  const userIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const alreadyFromDevice = global.attendanceRecords.some(
+  r => r.sessionId === sessionId && r.deviceId === deviceId
+);
 
-  // ❌ block multiple from same device
-  const alreadyFromIP = global.attendanceRecords.some(
-    r => r.sessionId === sessionId && r.ip === userIP
-  );
-
-  if (alreadyFromIP) {
-    return res.json({ success: false, message: "Already marked from this device" });
-  }
+if (alreadyFromDevice) {
+  return res.json({ success: false, message: "Already marked from this device" });
+}
 
   // 🔍 Find record
   let record = await Attendance.findOne({ date, section });
@@ -441,14 +438,13 @@ app.post("/student/mark-attendance", async (req, res) => {
 
   await record.save();
 
-  // ✅ store for live count
   global.attendanceRecords.push({
-    sessionId,
-    studentId,
-    name,
-    time: currentTime,
-    ip: userIP
-  });
+  sessionId,
+  studentId,
+  name,
+  time: currentTime,
+  deviceId
+});
 
   res.json({
     success: true,

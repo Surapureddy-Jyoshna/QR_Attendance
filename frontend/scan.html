@@ -26,7 +26,12 @@
 <script>
 const params = new URLSearchParams(window.location.search);
 const sessionId = params.get("session");
+let deviceId = localStorage.getItem("deviceId");
 
+if(!deviceId){
+    deviceId = "DEVICE_" + Math.random().toString(36).substring(2);
+    localStorage.setItem("deviceId", deviceId);
+}
 if(!sessionId){
     document.body.innerHTML="<h2>Invalid QR</h2>";
 }
@@ -49,10 +54,11 @@ document.getElementById("attendanceForm").onsubmit = async (e)=>{
             "Content-Type":"application/json"
         },
         body: JSON.stringify({
-            sessionId,
-            studentId,
-            name
-        })
+    sessionId,
+    studentId,
+    name,
+    deviceId
+})
     });
 
     const data = await res.json();
