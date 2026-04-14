@@ -831,7 +831,7 @@
   background: #fff;
   cursor: pointer;
 
-  width: 70px;   /* ✅ ADD THIS */
+  min-width: 140px;    /* ✅ ADD THIS */
 }
 
 .small-select:hover {
