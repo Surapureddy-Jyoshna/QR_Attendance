@@ -83,6 +83,7 @@ const attendanceSchema = new mongoose.Schema({
 const Attendance = mongoose.model("Attendance", attendanceSchema);
 const sessionSchema = new mongoose.Schema({
   sessionId: String,
+  teacherId: String,   // ✅ ADD THIS LINE
   section: String,
   date: String,
   lat: Number,
@@ -387,7 +388,7 @@ app.post("/teacher/start-session", authenticateToken, async (req, res) => {
 
   await Session.create({
     sessionId,
-     teacherId: req.user?.id,
+     teacherId: req.user.id,
     section,
     date,
     lat,
