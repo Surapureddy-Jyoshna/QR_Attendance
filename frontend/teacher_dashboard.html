@@ -224,7 +224,18 @@
   <!-- LOW ATTENDANCE BELOW -->
   <div class="card report-card">
     <h3>⚠️ Low Attendance</h3>
-    <div id="lowAttendanceList"></div>
+
+<select id="lowSectionSelect" onchange="loadLowAttendance()"
+        style="margin-bottom:10px; padding:6px;">
+    <option value="">-- Select Section --</option>
+    <option value="A">Section A</option>
+    <option value="B">Section B</option>
+    <option value="C">Section C</option>
+    <option value="D">Section D</option>
+    <option value="E">Section E</option>
+</select>
+
+<div id="lowAttendanceList"></div>
   </div>
 
 </div>

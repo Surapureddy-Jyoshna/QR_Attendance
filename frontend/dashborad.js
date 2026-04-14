@@ -450,6 +450,8 @@ async function loadReportBySection(){
 
         tbody.appendChild(tr);
     });
+    document.getElementById("lowSectionSelect").value = section;
+loadLowAttendance();
 }
 let chart;
 
@@ -477,75 +479,8 @@ async function loadReports(){
     renderTable(data.students);
     renderLowAttendance(data.students);
 }
-function renderChart(trend){
 
-    const ctx = document.getElementById("attendanceChart");
 
-    if(chart) chart.destroy();
-
-    chart = new Chart(ctx,{
-        type:"line",
-        data:{
-            labels: trend.map(t=>t.date),
-            datasets:[{
-                label:"Attendance %",
-                data: trend.map(t=>t.attendance),
-                borderColor:"#7c3aed",
-                fill:false
-            }]
-        }
-    });
-}
-function renderTable(students){
-
-    const tbody = document.getElementById("reportTable");
-    tbody.innerHTML="";
-
-    students.forEach(s=>{
-
-        let status="Good";
-        let color="green";
-
-        if(s.attendance < 75){
-            status="Low";
-            color="red";
-        }
-        else if(s.attendance < 85){
-            status="Average";
-            color="orange";
-        }
-
-        const tr=document.createElement("tr");
-
-        tr.innerHTML=`
-        <td>${s.name}</td>
-        <td>${s.roll}</td>
-        <td>${s.attendance}%</td>
-        <td style="color:${color}; font-weight:bold;">${status}</td>
-        `;
-
-        tbody.appendChild(tr);
-    });
-}
-function renderLowAttendance(students){
-
-    const container = document.getElementById("lowAttendanceList");
-    container.innerHTML="";
-
-    const low = students.filter(s=>s.attendance < 75);
-
-    if(low.length===0){
-        container.innerHTML="<p>All students are good 👍</p>";
-        return;
-    }
-
-    low.forEach(s=>{
-        const div=document.createElement("p");
-        div.style.color="red";
-        div.innerText=`${s.name} (${s.attendance}%)`;
-        container.appendChild(div);
-    });
-}
 function downloadCSV(){
 
     let rows = [["Name","Roll","Attendance"]];
@@ -773,4 +708,43 @@ async function loadAttendanceList(){
         container.appendChild(p);
     });
     loadSectionData();   // ✅ refresh stats
+}
+async function loadLowAttendance(){
+
+    const section = document.getElementById("lowSectionSelect").value;
+
+    if(!section){
+        document.getElementById("lowAttendanceList").innerHTML = "";
+        return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+        `${BASE_URL}/teacher/report/${section}`,
+        {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }
+    );
+
+    const students = await res.json();
+
+    const container = document.getElementById("lowAttendanceList");
+    container.innerHTML = "";
+
+    const low = students.filter(s => s.attendance < 75);
+
+    if(low.length === 0){
+        container.innerHTML = "<p>All students are good 👍</p>";
+        return;
+    }
+
+    low.forEach(s => {
+        const p = document.createElement("p");
+        p.style.color = "red";
+        p.innerText = `${s.name} (${s.attendance}%)`;
+        container.appendChild(p);
+    });
 }
