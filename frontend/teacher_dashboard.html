@@ -60,7 +60,10 @@
 
 <!-- MAIN CONTENT -->
 <main class="main-content">
-
+<button onclick="toggleSidebar()" 
+        style="margin-right:10px; padding:6px 10px; border:none; border-radius:6px; cursor:pointer;">
+    ☰
+</button>
   <header class="dashboard-header">
     <h1>Teacher Dashboard</h1>
     <button class="btn btn-primary" onclick="openClassModal()">+ Create Class</button>
@@ -221,25 +224,29 @@
 
   </div>
 
- <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+ <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; width:100%;">
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-
+  <!-- LEFT -->
   <h3 style="font-size:16px;">⚠️ Low Attendance</h3>
 
-  <select id="lowSectionSelect" class="small-select"
-          onchange="loadLowAttendance()">
-      <option value="">Section</option>
-      <option value="A">A</option>
-      <option value="B">B</option>
-      <option value="C">C</option>
-      <option value="D">D</option>
-      <option value="E">E</option>
-  </select>
+  <!-- RIGHT -->
+  <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+    <span style="font-size:14px;">Select:</span>
+
+    <select id="lowSectionSelect" class="small-select"
+            onchange="loadLowAttendance()">
+        <option value="">A</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+    </select>
+  </div>
 
 </div>
-</div>
-<!-- ✅ MOVE OUTSIDE -->
+
+<!-- LIST -->
 <div id="lowAttendanceList" class="low-list"></div>
 
 

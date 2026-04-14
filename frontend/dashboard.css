@@ -853,3 +853,16 @@
   display: flex;
   justify-content: space-between;
 }
+.sidebar.closed {
+  width: 70px;
+}
+
+.sidebar.closed .nav-item span,
+.sidebar.closed .sidebar-header h3,
+.sidebar.closed .sidebar-header p {
+  display: none;
+}
+
+.sidebar.closed .nav-item {
+  justify-content: center;
+}
