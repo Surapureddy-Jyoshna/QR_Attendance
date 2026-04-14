@@ -80,6 +80,16 @@ const attendanceSchema = new mongoose.Schema({
 });
 
 const Attendance = mongoose.model("Attendance", attendanceSchema);
+const sessionSchema = new mongoose.Schema({
+  sessionId: String,
+  section: String,
+  date: String,
+  lat: Number,
+  lng: Number,
+  active: Boolean
+});
+
+const Session = mongoose.model("Session", sessionSchema);
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371000; // meters
 
@@ -367,37 +377,31 @@ app.get("/teacher/students/:section", authenticateToken, async (req, res) => {
 
 });
 
-app.post("/teacher/start-session", (req, res) => {
+app.post("/teacher/start-session", async (req, res) => {
 
   const sessionId = "SESSION_" + Date.now();
+  const { section, lat, lng } = req.body;
+  const date = new Date().toISOString().split("T")[0];
 
-  // store session (temporary memory)
-  global.sessions = global.sessions || [];
- const { section, lat, lng } = req.body;
-
-// ✅ auto date
-const date = new Date().toISOString().split("T")[0];
-  global.sessions.push({
-  sessionId,
-  createdAt: Date.now(),
-  section,
-  date,
-  lat,
-  lng,
-  active: true
-});
+  await Session.create({
+    sessionId,
+    section,
+    date,
+    lat,
+    lng,
+    active: true
+  });
 
   res.json({ sessionId });
 });
-app.post("/teacher/close-session", (req, res) => {
+app.post("/teacher/close-session", async (req, res) => {
 
   const { sessionId } = req.body;
 
-  const session = global.sessions.find(s => s.sessionId === sessionId);
-
-  if(session){
-    session.active = false; // ❌ stop attendance
-  }
+  await Session.updateOne(
+    { sessionId },
+    { active: false }
+  );
 
   res.json({ success: true });
 });
@@ -413,9 +417,7 @@ app.post("/student/mark-attendance", async (req, res) => {
 
   const { sessionId, studentId, name, deviceId, lat, lng} = req.body;
 
-const session = (global.sessions || []).find(s => s.sessionId === sessionId);  if (!session) {
-  return res.json({ success: false, message: "Invalid QR" });
-}
+const session = await Session.findOne({ sessionId });
 
 // 🔥 LOCATION CHECK
 if(session.lat && session.lng && lat && lng){

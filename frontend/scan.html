@@ -52,61 +52,25 @@ document.getElementById("attendanceForm").onsubmit = async (e)=>{
 
     navigator.geolocation.getCurrentPosition(async (pos)=>{
 
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
         try {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
 
-            console.log("Sending request...");
-
-           console.log("Session:", sessionId);
-
-const controller = new AbortController();
-const timeout = setTimeout(() => controller.abort(), 10000);
-
-try {
-
-    const res = await fetch("https://qr-attendance-1-odo4.onrender.com/student/mark-attendance",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            sessionId,
-            studentId,
-            name,
-            deviceId,
-            lat,
-            lng
-        }),
-        signal: controller.signal
-    });
-
-    clearTimeout(timeout);
-
-    const data = await res.json();
-
-    console.log("Response:", data);
-
-    if(data.success){
-        document.getElementById("msg").innerHTML =
-        `<span style="color:green;">✅ Marked at ${data.time}</span>`;
-    }else{
-        document.getElementById("msg").innerHTML =
-        `<span style="color:red;">❌ ${data.message}</span>`;
-    }
-
-} catch(err){
-
-    console.error(err);
-
-    if(err.name === "AbortError"){
-        document.getElementById("msg").innerHTML =
-        `<span style="color:red;">❌ Server taking too long. Try again</span>`;
-    } else {
-        document.getElementById("msg").innerHTML =
-        `<span style="color:red;">❌ Network error</span>`;
-    }
-}
+            const res = await fetch("https://qr-attendance-1-odo4.onrender.com/student/mark-attendance",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body: JSON.stringify({
+                    sessionId,
+                    studentId,
+                    name,
+                    deviceId,
+                    lat,
+                    lng
+                })
+            });
 
             const data = await res.json();
 
@@ -121,12 +85,17 @@ try {
             }
 
         } catch(err){
-            console.error(err);
+
+            console.error("FETCH ERROR:", err);
+
             document.getElementById("msg").innerHTML =
             `<span style="color:red;">❌ Server error</span>`;
         }
 
     }, (err)=>{
+
+        console.error("LOCATION ERROR:", err);
+
         document.getElementById("msg").innerHTML =
         `<span style="color:red;">❌ Location permission denied</span>`;
     });
