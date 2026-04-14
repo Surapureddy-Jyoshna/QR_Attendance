@@ -379,7 +379,7 @@ app.get("/teacher/students/:section", authenticateToken, async (req, res) => {
 
 });
 
-app.post("/teacher/start-session", async (req, res) => {
+app.post("/teacher/start-session", authenticateToken, async (req, res) => {
 
   const sessionId = "SESSION_" + Date.now();
   const { section, lat, lng } = req.body;
@@ -387,7 +387,7 @@ app.post("/teacher/start-session", async (req, res) => {
 
   await Session.create({
     sessionId,
-     teacherId: req.user?.id || "temp",
+     teacherId: req.user?.id,
     section,
     date,
     lat,
