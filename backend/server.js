@@ -564,8 +564,10 @@ app.get("/teacher/report/:section", authenticateToken, async (req, res) => {
 
   try {
 
-    // 📌 TOTAL CLASSES
-    const totalClasses = await Class.countDocuments({ section });
+    const totalClasses = await Class.countDocuments({
+  teacherId: req.user.id,   // ✅ ADD THIS
+  section
+});
 
     // 📌 GET ALL STUDENTS (from CSV)
     const students = [];
