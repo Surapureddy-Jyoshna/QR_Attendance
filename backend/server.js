@@ -68,6 +68,7 @@ const classSchema = new mongoose.Schema({
 
 const Class = mongoose.model("Class", classSchema, "Classes");
 const attendanceSchema = new mongoose.Schema({
+    teacherId: String,
     date: String,
     section: String,
     students: [
@@ -336,6 +337,7 @@ app.get("/teacher/section-data/:section", authenticateToken, async (req, res) =>
            const today = new Date().toISOString().split("T")[0];
 
             const attendanceRecord = await Attendance.findOne({
+                teacherId: req.user.id,   // ✅ ADD THIS
                 section: section,
                 date: today
             });
@@ -385,6 +387,7 @@ app.post("/teacher/start-session", async (req, res) => {
 
   await Session.create({
     sessionId,
+     teacherId: req.user?.id || "temp",
     section,
     date,
     lat,
@@ -464,14 +467,18 @@ if (alreadyFromDevice) {
   return res.json({ success: false, message: "Already marked from this device" });
 }
 
-  // 🔍 Find record
-  let record = await Attendance.findOne({ date, section });
+  let record = await Attendance.findOne({
+  teacherId: session.teacherId,
+  date,
+  section
+});
 
   if (!record) {
     record = new Attendance({
-      date,
-      section,
-      students: []
+         teacherId: session.teacherId,   // ✅ ADD THIS
+         date,
+          section,
+          students: []
     });
   }
 
@@ -575,8 +582,10 @@ app.get("/teacher/report/:section", authenticateToken, async (req, res) => {
       })
       .on("end", async () => {
 
-        // 📌 GET ALL ATTENDANCE RECORDS
-        const records = await Attendance.find({ section });
+        const records = await Attendance.find({
+            teacherId: req.user.id,   // ✅ ADD THIS
+            section
+        });
 
         const result = students.map(student => {
 
