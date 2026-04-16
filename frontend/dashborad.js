@@ -147,8 +147,9 @@ function startLiveCount(){
 
             const data = await res.json();
 
-            // 🔥 ADD THIS LINE (IMPORTANT)
-            loadSectionData();   // ✅ refresh today's attendance
+            // ✅ Update ONLY today's attendance card
+            document.getElementById("todaysAttendance").innerText =
+                data.count;
 
         }catch(err){
             console.error("Live count error",err);
@@ -156,7 +157,6 @@ function startLiveCount(){
 
     },2000);
 
-    loadAttendanceList();
 }
 function startTimer(){
 
@@ -194,7 +194,6 @@ function startTimer(){
 
 async function closeAttendance(){
 
-  // 🔥 call backend to close session
   if(window.currentSessionId){
     await fetch(`${BASE_URL}/teacher/close-session`, {
       method: "POST",
@@ -208,9 +207,14 @@ async function closeAttendance(){
   }
 
   clearInterval(attendanceTimer);
+  clearInterval(liveInterval); // ✅ ADD THIS
+
   document.getElementById("qrWrapper").style.display="none";
   document.getElementById("qrcode").innerHTML="";
   document.getElementById("timerText").innerText="";
+
+  // ✅ Reload actual DB attendance
+  loadSectionData();
 }
 
 function openClassModal(){
